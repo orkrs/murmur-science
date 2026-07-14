@@ -1,0 +1,11 @@
+# Generated datasets, checkpoints and local test output
+artifacts/
+.test-tmp/
+.pytest_cache/
+.ruff_cache/
+__pycache__/
+*.pyc
+
+# Local environment files
+.venv/
+*.egg-info/

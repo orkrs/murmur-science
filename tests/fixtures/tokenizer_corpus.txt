@@ -1,0 +1,43 @@
+The quick brown fox jumps over the lazy dog.
+Привет, мир! Это тест русского языка.
+def hello_world():
+    print("Hello, World!")
+    return 42
+
+x = [1, 2, 3, 4, 5]
+y = sum(x)
+
+# Mathematical expressions
+E = mc^2
+∫ f(x) dx = F(x) + C
+
+# Special characters and emoji
+🎉 🚀 💻 🌍
+café naïve résumé
+
+# Code snippets
+import torch
+from torch import nn
+
+class Model(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.linear = nn.Linear(10, 5)
+
+    def forward(self, x):
+        return self.linear(x)
+
+# Russian text with various punctuation
+Здравствуйте! Как дела? Всё хорошо, спасибо.
+Москва — столица России.
+
+# Numbers and symbols
+1234567890
+!@#$%^&*()_+-=[]{}|;':",./<>?
+π ≈ 3.14159
+√2 ≈ 1.414
+
+# Mixed content
+The temperature is 25°C today.
+File path: C:\Users\test\file.txt
+URL: https://example.com/path?query=value&foo=bar

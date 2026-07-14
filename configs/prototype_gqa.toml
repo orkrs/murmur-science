@@ -1,0 +1,52 @@
+run_name = "prototype_gqa"
+output_dir = "artifacts/runs"
+
+[model]
+d_model = 1024
+vocab_size = 48000
+n_prelude = 2
+n_core = 4
+n_coda = 2
+q_heads = 16
+kv_heads = 4
+head_dim = 64
+ffn_dim = 2816
+max_seq_len = 1024
+min_depth = 2
+max_depth = 6
+mixer = "gqa"
+rope_theta = 10000.0
+residual_scale = 1.0
+norm_eps = 1e-5
+tie_embeddings = true
+
+[data]
+train_path = "artifacts/data/train.bin"
+val_path = "artifacts/data/val.bin"
+sequence_length = 1024
+batch_size = 2
+num_workers = 4
+pin_memory = true
+shuffle_seed = 42
+
+[train]
+seed = 42
+max_tokens = 1000000000
+learning_rate = 2e-4
+weight_decay = 0.1
+warmup_steps = 500
+grad_accum_steps = 8
+grad_clip_norm = 1.0
+fp16 = true
+log_interval = 10
+val_interval = 500
+checkpoint_interval = 2000
+max_grad_skips = 10
+
+[eval]
+batch_size = 4
+max_depth = 6
+num_samples = 500
+temperature = 1.0
+top_k = 50
+top_p = 0.9

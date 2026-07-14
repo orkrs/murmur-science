@@ -1,0 +1,61 @@
+[build]
+output_dir = "artifacts/hf_corpus/base_mix_v0_1"
+max_tokens = 300000000
+val_fraction = 0.02
+min_chars = 20
+max_chars = 2000000
+seed = 17
+write_corpus = true
+
+[[sources]]
+name = "fineweb_edu_en"
+repo = "HuggingFaceFW/fineweb-edu"
+config = "sample-10BT"
+split = "train"
+revision = "main"
+text_field = "text"
+weight = 0.35
+license = "odc-by-1.0+commoncrawl-terms"
+language = "en"
+
+[[sources]]
+name = "fineweb2_hq_ru"
+repo = "epfml/FineWeb2-HQ"
+config = "rus_Cyrl"
+split = "train"
+revision = "main"
+text_field = "text"
+weight = 0.25
+license = "odc-by-1.0+commoncrawl-terms"
+language = "ru"
+
+[[sources]]
+name = "common_pile_stackv2_edu"
+repo = "common-pile/stackv2_edu_filtered"
+split = "train"
+revision = "main"
+text_field = "text"
+weight = 0.20
+license = "per-document-permissive"
+language = "code"
+
+[[sources]]
+name = "finemath_4plus"
+repo = "HuggingFaceTB/finemath"
+config = "finemath-4plus"
+split = "train"
+revision = "main"
+text_field = "text"
+weight = 0.12
+license = "odc-by-1.0+commoncrawl-terms"
+language = "en-math"
+
+[[sources]]
+name = "common_pile_pes2o"
+repo = "common-pile/peS2o_filtered"
+split = "train"
+revision = "main"
+text_field = "text"
+weight = 0.08
+license = "per-document-open-license"
+language = "en-science"
