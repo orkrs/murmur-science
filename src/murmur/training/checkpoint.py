@@ -45,7 +45,9 @@ def save_checkpoint_atomic(
     if tmp.exists():
         shutil.rmtree(tmp)
     tmp.mkdir(parents=True, exist_ok=True)
-    save_file({k: v.detach().cpu() for k, v in model.state_dict().items()}, str(tmp / MODEL_FILE))
+    # Clone tensors to avoid safetensors duplicate memory check for tied weights
+    state_dict = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
+    save_file(state_dict, str(tmp / MODEL_FILE))
     torch.save(
         {"optimizer": optimizer.state_dict(), "scheduler": scheduler.state_dict(), "scaler": scaler.state_dict(), "rng": capture_rng_state(), "extra": extra_state or {}},
         tmp / "state.pt",
