@@ -20,7 +20,7 @@ class ModelConfig:
     max_seq_len: int
     min_depth: int
     max_depth: int
-    mixer: Literal["gqa", "mamba3"] = "gqa"
+    mixer: Literal["gqa", "mamba3", "mamba3_mimo"] = "gqa"
     rope_theta: float = 10000.0
     rope_dim: int | None = None
     residual_scale: float = 1.0

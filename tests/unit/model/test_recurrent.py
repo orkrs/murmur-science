@@ -1,7 +1,9 @@
 """Tests for recurrent core."""
 
 import torch
+import torch.nn as nn
 
+import murmur.model.recurrent as recurrent_module
 from murmur.model.recurrent import RecurrentCore, StableInputInjection
 
 
@@ -87,3 +89,25 @@ class TestRecurrentCore:
         depths = torch.tensor([1])
         out = core(hidden, injection, depths)
         assert out.shape == (1, 4, 64)
+
+    def test_mamba3_mimo_core_uses_rank_two_mixer(self, monkeypatch):
+        """The experimental MIMO branch must not silently instantiate SISO."""
+        calls = []
+
+        class FakeMambaBlock(nn.Module):
+            def __init__(self, *args, **kwargs):
+                super().__init__()
+                calls.append(kwargs)
+
+            def forward(self, x, positions=None, kv_cache=None, use_cache=False):
+                return x, None
+
+        monkeypatch.setattr(recurrent_module, "Mamba3Block", FakeMambaBlock)
+        core = RecurrentCore(
+            n_blocks=2, d_model=64, q_heads=2, kv_heads=1,
+            head_dim=32, ffn_dim=128, mixer="mamba3_mimo"
+        )
+
+        assert len(core.blocks) == 2
+        assert [call["is_mimo"] for call in calls] == [True, True]
+        assert [call["mimo_rank"] for call in calls] == [2, 2]

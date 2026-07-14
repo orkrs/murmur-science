@@ -79,11 +79,15 @@ class RecurrentCore(nn.Module):
         self.n_blocks = n_blocks
         self.d_model = d_model
 
-        if mixer not in {"gqa", "mamba3"}:
+        if mixer not in {"gqa", "mamba3", "mamba3_mimo"}:
             raise ValueError(f"unknown mixer: {mixer}")
-        if mixer == "mamba3":
+        if mixer in {"mamba3", "mamba3_mimo"}:
             self.blocks = nn.ModuleList([
-                Mamba3Block(d_model, ffn_dim, d_state=128, headdim=head_dim, norm_eps=norm_eps, residual_scale=residual_scale, layer_idx=i)
+                Mamba3Block(
+                    d_model, ffn_dim, d_state=128, headdim=head_dim,
+                    norm_eps=norm_eps, residual_scale=residual_scale, layer_idx=i,
+                    is_mimo=mixer == "mamba3_mimo", mimo_rank=2,
+                )
                 for i in range(n_blocks)
             ])
         else:
