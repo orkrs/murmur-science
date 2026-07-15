@@ -1,0 +1,53 @@
+run_name = "rtx6000_ada_mimo_40m_smoke"
+output_dir = "artifacts/runs"
+
+[model]
+d_model = 512
+vocab_size = 32000
+n_prelude = 1
+n_core = 4
+n_coda = 1
+q_heads = 8
+kv_heads = 2
+head_dim = 64
+ffn_dim = 1408
+max_seq_len = 512
+min_depth = 1
+max_depth = 4
+mixer = "mamba3_mimo"
+rope_theta = 10000.0
+residual_scale = 1.0
+norm_eps = 1e-5
+tie_embeddings = true
+
+[data]
+train_path = "artifacts/data/train.bin"
+val_path = "artifacts/data/val.bin"
+sequence_length = 512
+batch_size = 2
+num_workers = 0
+pin_memory = true
+shuffle_seed = 42
+
+[train]
+seed = 42
+max_tokens = 2000000
+learning_rate = 0.0002
+weight_decay = 0.1
+warmup_steps = 20
+grad_accum_steps = 8
+grad_clip_norm = 1.0
+fp16 = false
+bf16 = true
+log_interval = 10
+val_interval = 100
+checkpoint_interval = 250
+max_grad_skips = 10
+
+[eval]
+batch_size = 2
+max_depth = 4
+num_samples = 100
+temperature = 1.0
+top_k = 50
+top_p = 0.9

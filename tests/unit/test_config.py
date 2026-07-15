@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from murmur.config import ConfigError, load_run_config
+from murmur.config import ConfigError, TrainConfig, load_run_config
 
 
 class TestConfigLoading:
@@ -180,6 +180,16 @@ class TestDataConfigValidation:
 
 class TestTrainConfigValidation:
     """Test TrainConfig validation."""
+
+    def test_bf16_is_allowed_without_fp16(self):
+        config = TrainConfig(42, 1000, 3e-4, 0.1, 10, 1, 1.0, fp16=False, bf16=True)
+
+        assert config.bf16 is True
+        assert config.to_dict()["bf16"] is True
+
+    def test_rejects_enabling_fp16_and_bf16_together(self):
+        with pytest.raises(ConfigError, match="cannot both be enabled"):
+            TrainConfig(42, 1000, 3e-4, 0.1, 10, 1, 1.0, fp16=True, bf16=True)
 
     def test_learning_rate_must_be_positive(self, tmp_path):
         """learning_rate must be > 0."""

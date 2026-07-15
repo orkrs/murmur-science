@@ -57,6 +57,7 @@ class TrainConfig:
     grad_accum_steps: int
     grad_clip_norm: float
     fp16: bool = True
+    bf16: bool = False
     log_interval: int = 10
     val_interval: int = 100
     checkpoint_interval: int = 500
@@ -75,6 +76,8 @@ class TrainConfig:
             raise ConfigError(f"grad_accum_steps ({self.grad_accum_steps}) must be >= 1")
         if self.grad_clip_norm <= 0:
             raise ConfigError(f"grad_clip_norm ({self.grad_clip_norm}) must be > 0")
+        if self.fp16 and self.bf16:
+            raise ConfigError("fp16 and bf16 cannot both be enabled")
 
     def to_dict(self) -> dict:
         return {
@@ -86,6 +89,7 @@ class TrainConfig:
             "grad_accum_steps": self.grad_accum_steps,
             "grad_clip_norm": self.grad_clip_norm,
             "fp16": self.fp16,
+            "bf16": self.bf16,
             "log_interval": self.log_interval,
             "val_interval": self.val_interval,
             "checkpoint_interval": self.checkpoint_interval,
@@ -229,6 +233,7 @@ def load_run_config(path: Path) -> RunConfig:
         "grad_accum_steps",
         "grad_clip_norm",
         "fp16",
+        "bf16",
         "log_interval",
         "val_interval",
         "checkpoint_interval",

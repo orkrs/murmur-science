@@ -30,6 +30,8 @@ class Trainer:
             self.optimizer,
             lambda step: cosine_warmup_lambda(step, config.train.warmup_steps, total_steps),
         )
+        self.autocast_enabled = (config.train.fp16 or config.train.bf16) and self.device.type == "cuda"
+        self.autocast_dtype = torch.bfloat16 if config.train.bf16 else torch.float16
         scaler_enabled = config.train.fp16 and self.device.type == "cuda"
         try:
             self.scaler = torch.amp.GradScaler("cuda", enabled=scaler_enabled)
@@ -65,7 +67,11 @@ class Trainer:
                 tokens = next(iterator)
             tokens = tokens.to(self.device, non_blocking=True)
             depths = self._depths(tokens.shape[0]).to(self.device)
-            with torch.autocast(device_type=self.device.type, dtype=torch.float16, enabled=self.scaler.is_enabled()):
+            with torch.autocast(
+                device_type=self.device.type,
+                dtype=self.autocast_dtype,
+                enabled=self.autocast_enabled,
+            ):
                 output = self.model(tokens, labels=tokens, depths=depths)
                 loss = output.loss / self.config.train.grad_accum_steps
             self.scaler.scale(loss).backward()
