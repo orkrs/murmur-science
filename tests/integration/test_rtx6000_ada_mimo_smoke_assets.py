@@ -20,6 +20,7 @@ def test_rtx6000_ada_mimo_smoke_assets_are_self_contained() -> None:
     assert "english_smoke" in source
     assert "HuggingFaceFW/fineweb-edu" not in source
     assert "tilelang==0.1.9" in source
+    assert "download.pytorch.org/whl/cu130" in source
     assert "MAMBA_FORCE_BUILD" in source
     assert "mamba3_mimo" in source
     assert "Add Data" not in source
