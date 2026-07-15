@@ -10,9 +10,9 @@ Provide one self-contained web page for selecting a GPU to train Murmur. It must
 
 ## Data and scope
 
-Rows cover: Tesla T4, RTX A5000, RTX 4000 Ada, RTX A6000, RTX 6000 Ada, RTX 4090, RTX 5090, A40, L40, A100 PCIe 80 GB, A100 SXM 80 GB, H100 PCIe 80 GB, H100 SXM 80 GB and H100 NVL.
+Rows cover: Tesla T4, RTX A5000, RTX 4000 Ada, RTX A6000, RTX 6000 Ada, RTX 4090, RTX 5090, RTX PRO 4500, RTX PRO 6000, RTX PRO 6000 WK, A40, L40, L40S, A100 PCIe 80 GB, A100 SXM 80 GB, H100 PCIe 80 GB, H100 SXM 80 GB, H100 NVL, H200 SXM, H200 NVL, B200, B300 and B300 MIG 34 GB.
 
-The table records the user-provided hourly price only where one was supplied. Unknown prices are shown as an em dash and sort after known prices.
+The table records the user-provided hourly price, VRAM, maximum GPU count, system RAM and vCPU count where supplied. Unknown values are shown as an em dash and sort after known values.
 
 MIMO labels use exactly these meanings:
 

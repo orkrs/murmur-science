@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Murmur GPU tier list</title>
+  <style>
+    :root { --bg:#090d14; --panel:#111926; --panel-2:#151f2e; --ink:#edf3fb; --muted:#96a7bd; --line:#28384d; --cyan:#60d9ff; --lime:#a6ef72; --amber:#ffc563; --red:#ff7d8b; }
+    * { box-sizing:border-box; } body { margin:0; color:var(--ink); background:radial-gradient(circle at 82% -10%,#1a3550 0,transparent 28rem),var(--bg); font:15px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; }
+    main { width:min(1580px,calc(100% - 40px)); margin:0 auto; padding:52px 0 70px; }
+    .eyebrow { color:var(--cyan); font-size:.72rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
+    h1 { max-width:780px; margin:8px 0 12px; font-size:clamp(2.1rem,5vw,4.7rem); line-height:.98; letter-spacing:-.065em; }
+    .lead { max-width:850px; margin:0; color:var(--muted); font-size:1.06rem; }
+    .cards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:32px 0 22px; }
+    .card { padding:18px; border:1px solid var(--line); border-radius:14px; background:linear-gradient(145deg,var(--panel),#0d141f); }
+    .card b { display:block; margin-bottom:6px; font-size:1.05rem; }.card span { color:var(--muted); font-size:.88rem; }
+    .toolbar { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:22px 0 14px; }
+    .search { flex:1 1 270px; min-width:200px; padding:12px 14px; color:var(--ink); background:#0b111b; border:1px solid var(--line); border-radius:9px; outline:none; }
+    .search:focus { border-color:var(--cyan); box-shadow:0 0 0 3px #60d9ff18; }
+    button { cursor:pointer; padding:9px 12px; color:var(--muted); background:var(--panel); border:1px solid var(--line); border-radius:7px; font:inherit; font-size:.82rem; }
+    button:hover,button.active { color:var(--ink); border-color:var(--cyan); background:#173147; }
+    .table-wrap { overflow:auto; border:1px solid var(--line); border-radius:14px; background:var(--panel); }
+    table { width:100%; min-width:1230px; border-collapse:collapse; }
+    th { position:sticky; top:0; z-index:1; padding:12px 11px; color:#b7c9dd; background:#172336; border-bottom:1px solid var(--line); font-size:.72rem; letter-spacing:.08em; text-align:left; text-transform:uppercase; white-space:nowrap; }
+    th button { padding:0; color:inherit; border:0; background:transparent; font-size:inherit; letter-spacing:inherit; text-transform:inherit; } th button:hover { background:transparent; color:var(--cyan); }
+    td { padding:13px 11px; border-bottom:1px solid #223146; vertical-align:top; } tbody tr { transition:background .15s; } tbody tr:hover { background:#192538; } tbody tr:last-child td { border-bottom:0; }
+    .gpu { font-weight:750; }.sub { display:block; margin-top:3px; color:var(--muted); font-size:.78rem; font-weight:500; }.num { font-variant-numeric:tabular-nums; white-space:nowrap; }
+    .badge { display:inline-flex; align-items:center; gap:6px; padding:4px 7px; border:1px solid; border-radius:999px; font-size:.73rem; font-weight:750; white-space:nowrap; }.badge::before { content:""; width:6px; height:6px; border-radius:99px; background:currentColor; }
+    .verified { color:var(--lime); background:#a6ef7210; border-color:#a6ef7246; }.gate { color:var(--amber); background:#ffc56310; border-color:#ffc56346; }.blocked { color:var(--red); background:#ff7d8b10; border-color:#ff7d8b46; }
+    .role { max-width:210px; color:#c7d5e4; }.tier { display:inline-block; margin-right:5px; color:var(--cyan); font-weight:800; }.note { margin:18px 0 0; padding:14px 16px; color:var(--muted); border-left:3px solid var(--amber); background:#ffc5630c; }.sources { margin-top:30px; color:var(--muted); font-size:.85rem; }.sources a { color:var(--cyan); } .count { color:var(--muted); font-size:.86rem; }
+    @media (max-width:720px) { main{width:min(100% - 24px,1580px);padding-top:32px}.cards{grid-template-columns:1fr}.toolbar{align-items:stretch}.toolbar button{flex:1}.search{flex-basis:100%} }
+  </style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">Murmur / hardware decision sheet</div>
+  <h1>GPU tier list<br>для обучения с нуля</h1>
+  <p class="lead">Сортируемый список карт для 353.5M и следующих Murmur-моделей. Цена и параметры инстанса — предоставлены пользователем; совместимость Mamba3 MIMO намеренно оценивается строже, чем общая совместимость CUDA.</p>
+  <section class="cards" aria-label="Основные выводы">
+    <div class="card"><b>350M GQA / SISO</b><span>48 GB Ada/Ampere — комфортный минимум. RTX 6000 Ada, L40(S), RTX A6000 и A40 подходят по памяти.</span></div>
+    <div class="card"><b>MIMO = сначала gate</b><span>Ни одна из перечисленных карт не имеет опубликованного точного Mamba3 MIMO benchmark/result. H100 — единственная архитектура, явно упомянутая upstream для Mamba3 decode.</span></div>
+    <div class="card"><b>Практичный value</b><span>A40 $0.44/ч и RTX A6000 $0.49/ч — дешёвые 48 GB варианты. RTX 6000 Ada $0.77/ч — предпочтительнее по скорости.</span></div>
+  </section>
+  <div class="toolbar">
+    <input id="search" class="search" type="search" placeholder="Поиск: карта, поколение, роль…" aria-label="Поиск GPU">
+    <button class="active" data-filter="all">Все статусы</button>
+    <button data-filter="Gate required">Нужен gate</button>
+    <button data-filter="Blocked here">Заблокировано у нас</button>
+    <span id="count" class="count"></span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th><button data-sort="name">GPU ↕</button></th><th><button data-sort="generation">Поколение ↕</button></th><th><button data-sort="price">Цена / час ↕</button></th><th><button data-sort="vram">VRAM ↕</button></th><th><button data-sort="maxGpus">Max GPU ↕</button></th><th><button data-sort="ram">RAM ↕</button></th><th><button data-sort="vcpus">vCPU ↕</button></th><th><button data-sort="mimo">Mamba3 MIMO ↕</button></th><th>Роль для Murmur</th>
+      </tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <p class="note"><strong>Как читать MIMO-статус.</strong> <em>Gate required</em> означает: карта подходит для CUDA/PyTorch и может работать с TileLang, но запуск именно Mamba3 MIMO на точной модели не подтверждён опубликованным результатом. На Tesla T4 наш запуск был остановлен ошибкой импорта TileLang/TVM-FFI до выполнения MIMO-ядра — это не доказательство фундаментальной несовместимости T4.</p>
+  <div class="sources"><strong>Источники совместимости:</strong> <a href="https://github.com/state-spaces/mamba" target="_blank" rel="noreferrer">Mamba upstream</a> (Mamba3 требует Linux/NVIDIA/CUDA; decode отмечен как проверенный на H100), <a href="https://github.com/tile-ai/tilelang" target="_blank" rel="noreferrer">TileLang</a> (тестовые NVIDIA: H100, A100, V100, RTX 4090, RTX 3090, RTX A6000), <a href="https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5090/" target="_blank" rel="noreferrer">NVIDIA RTX 5090</a>. Цены и конфигурации инстансов — из сообщения пользователя от 15 июля 2026.</div>
+</main>
+<script>
+const GPU_ROWS = [
+  {name:"Tesla T4",generation:"Turing",price:null,priceDisplay:"—",vram:16,maxGpus:1,ram:null,vcpus:null,mimo:"Blocked here",detail:"Kaggle: TileLang/TVM-FFI import error",role:"Smoke GQA/SISO only; не использовать для MIMO"},
+  {name:"RTX A5000",generation:"Ampere",price:null,priceDisplay:"—",vram:24,maxGpus:1,ram:null,vcpus:null,mimo:"Gate required",detail:"24 GB ограничивает batch",role:"350M только с micro-batch 1"},
+  {name:"RTX 4000 Ada",generation:"Ada",price:null,priceDisplay:"—",vram:20,maxGpus:1,ram:null,vcpus:null,mimo:"Gate required",detail:"20 GB VRAM",role:"40M smoke; 350M с жёстким accumulation"},
+  {name:"RTX 4090",generation:"Ada",price:null,priceDisplay:"—",vram:24,maxGpus:1,ram:null,vcpus:null,mimo:"Gate required",detail:"TileLang tested device; не MIMO proof",role:"Дешёвый 350M GQA/SISO"},
+  {name:"RTX A6000",generation:"Ampere",price:0.49,priceDisplay:"$0.49/hr",vram:48,maxGpus:1,ram:62,vcpus:16,mimo:"Gate required",detail:"TileLang tested device; не MIMO proof",role:"Value: 350M GQA/SISO; MIMO gate"},
+  {name:"A40",generation:"Ampere",price:0.44,priceDisplay:"$0.44/hr",vram:48,maxGpus:5,ram:50,vcpus:9,mimo:"Gate required",detail:"Same generation class as RTX A6000",role:"Самый дешёвый 48 GB: 350M GQA/SISO"},
+  {name:"RTX 6000 Ada",generation:"Ada",price:0.77,priceDisplay:"$0.77/hr",vram:48,maxGpus:1,ram:62,vcpus:16,mimo:"Gate required",detail:"Ada, exact MIMO result not published",role:"Рекомендуемый value для 350M"},
+  {name:"L40",generation:"Ada",price:0.82,priceDisplay:"$0.82/hr",vram:48,maxGpus:8,ram:null,vcpus:null,mimo:"Gate required",detail:"48 GB Ada",role:"350M GQA/SISO; MIMO gate"},
+  {name:"L40S",generation:"Ada",price:0.99,priceDisplay:"$0.99/hr",vram:48,maxGpus:4,ram:62,vcpus:16,mimo:"Gate required",detail:"48 GB Ada",role:"Быстрый 350M GQA/SISO"},
+  {name:"RTX 5090",generation:"Blackwell",price:0.99,priceDisplay:"$0.99/hr",vram:32,maxGpus:5,ram:94,vcpus:12,mimo:"Gate required",detail:"SM120; current Mamba pin needs gate",role:"Быстрый 350M GQA/SISO; экспериментальный MIMO"},
+  {name:"RTX PRO 4500",generation:"Blackwell",price:0.74,priceDisplay:"$0.74/hr",vram:32,maxGpus:4,ram:62,vcpus:8,mimo:"Gate required",detail:"32 GB Blackwell",role:"350M GQA/SISO; MIMO gate"},
+  {name:"A100 PCIe",generation:"Ampere",price:1.39,priceDisplay:"$1.39/hr",vram:80,maxGpus:6,ram:117,vcpus:12,mimo:"Gate required",detail:"TileLang tested architecture; no exact MIMO result",role:"Комфортный полный 350M pretraining"},
+  {name:"A100 SXM",generation:"Ampere",price:1.49,priceDisplay:"$1.49/hr",vram:80,maxGpus:6,ram:117,vcpus:16,mimo:"Gate required",detail:"TileLang tested architecture; no exact MIMO result",role:"Полный 350M; 1.3B experiments"},
+  {name:"RTX PRO 6000 WK",generation:"Blackwell",price:1.89,priceDisplay:"$1.89/hr",vram:96,maxGpus:1,ram:125,vcpus:16,mimo:"Gate required",detail:"96 GB Blackwell",role:"1.3B GQA/SISO; MIMO gate"},
+  {name:"RTX PRO 6000",generation:"Blackwell",price:1.99,priceDisplay:"$1.99/hr",vram:96,maxGpus:8,ram:140,vcpus:16,mimo:"Gate required",detail:"96 GB Blackwell",role:"1.3B GQA/SISO; MIMO gate"},
+  {name:"H100 PCIe",generation:"Hopper",price:2.89,priceDisplay:"$2.89/hr",vram:80,maxGpus:1,ram:251,vcpus:16,mimo:"Gate required",detail:"H100 upstream mentions decode, SKU unqualified",role:"Предпочтительно для full MIMO после gate"},
+  {name:"H100 SXM",generation:"Hopper",price:2.99,priceDisplay:"$2.99/hr",vram:80,maxGpus:8,ram:125,vcpus:8,mimo:"Gate required",detail:"H100 is upstream-tested for decode; run training gate",role:"Лучший старт MIMO и быстрый 350M"},
+  {name:"H100 NVL",generation:"Hopper",price:3.19,priceDisplay:"$3.19/hr",vram:94,maxGpus:3,ram:141,vcpus:16,mimo:"Gate required",detail:"Hopper; exact MIMO result not published",role:"MIMO / 1.3B"},
+  {name:"H200 NVL",generation:"Hopper",price:3.79,priceDisplay:"$3.79/hr",vram:143,maxGpus:1,ram:283,vcpus:16,mimo:"Gate required",detail:"Hopper, larger HBM",role:"MIMO / 1.3B–3B"},
+  {name:"H200 SXM",generation:"Hopper",price:4.39,priceDisplay:"$4.39/hr",vram:141,maxGpus:8,ram:188,vcpus:12,mimo:"Gate required",detail:"Hopper, larger HBM",role:"Быстрый MIMO / multi-GPU"},
+  {name:"B300 MIG 34GB",generation:"Blackwell",price:0.50,priceDisplay:"$0.50/hr",vram:34,maxGpus:1,ram:null,vcpus:null,mimo:"Gate required",detail:"MIG slice, 34 GB",role:"350M GQA/SISO; MIMO gate"},
+  {name:"B200",generation:"Blackwell",price:5.89,priceDisplay:"$5.89/hr",vram:180,maxGpus:2,ram:251,vcpus:24,mimo:"Gate required",detail:"180 GB Blackwell",role:"3B+ research; MIMO gate"},
+  {name:"B300",generation:"Blackwell",price:7.39,priceDisplay:"$7.39/hr",vram:288,maxGpus:2,ram:251,vcpus:32,mimo:"Gate required",detail:"288 GB Blackwell",role:"3B+ / multi-GPU research; MIMO gate"}
+];
+
+let activeFilter = "all";
+let activeSort = {key:"price", direction:1};
+const statusRank = {"Blocked here":0,"Gate required":1,"Verified upstream":2};
+const rowsElement = document.getElementById("rows");
+const countElement = document.getElementById("count");
+const searchElement = document.getElementById("search");
+
+function display(value, suffix="") { return value == null ? "—" : `${value}${suffix}`; }
+function statusClass(status) { return status === "Blocked here" ? "blocked" : status === "Verified upstream" ? "verified" : "gate"; }
+function visibleRows() {
+  const query = searchElement.value.trim().toLocaleLowerCase("ru");
+  return GPU_ROWS.filter(row => (activeFilter === "all" || row.mimo === activeFilter) && `${row.name} ${row.generation} ${row.role} ${row.detail}`.toLocaleLowerCase("ru").includes(query));
+}
+function sortRows(key) {
+  activeSort = activeSort.key === key ? {key, direction:-activeSort.direction} : {key, direction:1};
+  renderRows(visibleRows());
+}
+function renderRows(rows) {
+  const {key, direction} = activeSort;
+  const sorted = [...rows].sort((a,b) => {
+    const av = key === "mimo" ? statusRank[a.mimo] : a[key]; const bv = key === "mimo" ? statusRank[b.mimo] : b[key];
+    if (av == null) return 1; if (bv == null) return -1;
+    return typeof av === "number" ? direction * (av-bv) : direction * String(av).localeCompare(String(bv), "ru");
+  });
+  rowsElement.innerHTML = sorted.map(row => `<tr><td class="gpu">${row.name}<span class="sub">${row.detail}</span></td><td>${row.generation}</td><td class="num">${row.priceDisplay}</td><td class="num">${display(row.vram," GB")}</td><td class="num">${display(row.maxGpus)}</td><td class="num">${display(row.ram," GB")}</td><td class="num">${display(row.vcpus)}</td><td><span class="badge ${statusClass(row.mimo)}">${row.mimo}</span></td><td class="role"><span class="tier">${row.vram >= 80 ? "A" : row.vram >= 48 ? "B" : "C"}</span>${row.role}</td></tr>`).join("");
+  countElement.textContent = `${sorted.length} GPU`;
+}
+document.querySelectorAll("[data-sort]").forEach(button => button.addEventListener("click", () => sortRows(button.dataset.sort)));
+document.querySelectorAll("[data-filter]").forEach(button => button.addEventListener("click", () => { activeFilter=button.dataset.filter; document.querySelectorAll("[data-filter]").forEach(item=>item.classList.toggle("active",item===button)); renderRows(visibleRows()); }));
+searchElement.addEventListener("input", () => renderRows(visibleRows()));
+renderRows(visibleRows());
+</script>
+</body>
+</html>
