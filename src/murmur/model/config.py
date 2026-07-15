@@ -21,6 +21,7 @@ class ModelConfig:
     min_depth: int
     max_depth: int
     mixer: Literal["gqa", "mamba3", "mamba3_mimo"] = "gqa"
+    mamba_chunk_size: int | None = None
     rope_theta: float = 10000.0
     rope_dim: int | None = None
     residual_scale: float = 1.0
@@ -57,6 +58,8 @@ class ModelConfig:
             raise ValueError("n_prelude, n_core, n_coda must be non-negative")
         if self.vocab_size < 1:
             raise ValueError(f"vocab_size ({self.vocab_size}) must be >= 1")
+        if self.mamba_chunk_size is not None and self.mamba_chunk_size < 8:
+            raise ValueError("mamba_chunk_size must be >= 8 when specified")
 
     @property
     def effective_rope_dim(self) -> int:
@@ -84,6 +87,7 @@ class ModelConfig:
             "min_depth": self.min_depth,
             "max_depth": self.max_depth,
             "mixer": self.mixer,
+            "mamba_chunk_size": self.mamba_chunk_size,
             "rope_theta": self.rope_theta,
             "rope_dim": self.rope_dim,
             "residual_scale": self.residual_scale,

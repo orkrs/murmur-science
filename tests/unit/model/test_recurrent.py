@@ -111,3 +111,23 @@ class TestRecurrentCore:
         assert len(core.blocks) == 2
         assert [call["is_mimo"] for call in calls] == [True, True]
         assert [call["mimo_rank"] for call in calls] == [2, 2]
+
+    def test_mamba3_mimo_core_forwards_configured_chunk_size(self, monkeypatch):
+        """The runtime-selected MIMO chunk size reaches every Mamba block."""
+        calls = []
+
+        class FakeMambaBlock(nn.Module):
+            def __init__(self, *args, **kwargs):
+                super().__init__()
+                calls.append(kwargs)
+
+            def forward(self, x, positions=None, kv_cache=None, use_cache=False):
+                return x, None
+
+        monkeypatch.setattr(recurrent_module, "Mamba3Block", FakeMambaBlock)
+        RecurrentCore(
+            n_blocks=2, d_model=64, q_heads=2, kv_heads=1,
+            head_dim=32, ffn_dim=128, mixer="mamba3_mimo", mamba_chunk_size=8,
+        )
+
+        assert [call["chunk_size"] for call in calls] == [8, 8]

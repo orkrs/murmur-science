@@ -141,6 +141,24 @@ class TestModelConfigValidation:
         with pytest.raises(ValueError, match="max_depth.*must be >= min_depth"):
             load_run_config(path)
 
+    def test_loads_mamba_chunk_size(self, tmp_path):
+        """A Mamba config may select a runtime-safe TileLang chunk size."""
+        path = tmp_path / "mamba.toml"
+        path.write_text(
+            "[model]\nd_model = 512\nvocab_size = 32000\nn_prelude = 1\nn_core = 2\n"
+            "n_coda = 1\nq_heads = 8\nkv_heads = 2\nhead_dim = 64\nffn_dim = 1408\n"
+            "max_seq_len = 512\nmin_depth = 1\nmax_depth = 4\nmixer = 'mamba3_mimo'\n"
+            "mamba_chunk_size = 8\n\n"
+            "[data]\ntrain_path = 'x'\nval_path = 'y'\nsequence_length = 512\nbatch_size = 1\n\n"
+            "[train]\nseed = 42\nmax_tokens = 1000\nlearning_rate = 3e-4\n"
+            "weight_decay = 0.1\nwarmup_steps = 10\ngrad_accum_steps = 1\ngrad_clip_norm = 1.0\n",
+            encoding="utf-8",
+        )
+
+        config = load_run_config(path)
+
+        assert config.model.mamba_chunk_size == 8
+
 
 class TestDataConfigValidation:
     """Test DataConfig validation."""

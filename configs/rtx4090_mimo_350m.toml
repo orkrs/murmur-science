@@ -1,0 +1,55 @@
+run_name = "rtx4090_mimo_350m"
+output_dir = "artifacts/runs"
+
+[model]
+d_model = 1792
+vocab_size = 48000
+n_prelude = 2
+n_core = 3
+n_coda = 2
+q_heads = 28
+kv_heads = 2
+head_dim = 64
+ffn_dim = 4864
+max_seq_len = 1024
+min_depth = 1
+max_depth = 4
+mixer = "mamba3_mimo"
+# The launcher replaces this with the first real forward/backward-safe choice.
+mamba_chunk_size = 16
+rope_theta = 10000.0
+residual_scale = 1.0
+norm_eps = 1e-5
+tie_embeddings = true
+
+[data]
+train_path = "artifacts/rtx4090_mixed_350m_data/train.bin"
+val_path = "artifacts/rtx4090_mixed_350m_data/val.bin"
+sequence_length = 1024
+batch_size = 1
+num_workers = 0
+pin_memory = true
+shuffle_seed = 42
+
+[train]
+seed = 42
+max_tokens = 7500000000
+learning_rate = 0.0002
+weight_decay = 0.1
+warmup_steps = 2000
+grad_accum_steps = 32
+grad_clip_norm = 1.0
+fp16 = false
+bf16 = true
+log_interval = 20
+val_interval = 1000
+checkpoint_interval = 250000
+max_grad_skips = 10
+
+[eval]
+batch_size = 1
+max_depth = 4
+num_samples = 1000
+temperature = 1.0
+top_k = 50
+top_p = 0.9

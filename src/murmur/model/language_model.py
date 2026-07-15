@@ -60,7 +60,8 @@ class MurmurForCausalLM(nn.Module):
         self.core = RecurrentCore(
             config.n_core, config.d_model, config.q_heads, config.kv_heads,
             config.head_dim, config.ffn_dim, config.max_seq_len,
-            config.rope_theta, config.norm_eps, config.residual_scale, config.mixer
+            config.rope_theta, config.norm_eps, config.residual_scale, config.mixer,
+            config.mamba_chunk_size,
         )
 
         self.coda = nn.ModuleList([

@@ -195,6 +195,7 @@ def load_run_config(path: Path) -> RunConfig:
         "min_depth",
         "max_depth",
         "mixer",
+        "mamba_chunk_size",
         "rope_theta",
         "rope_dim",
         "residual_scale",

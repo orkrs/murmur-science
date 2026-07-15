@@ -36,6 +36,7 @@ class Mamba3Block(nn.Module):
         layer_idx: int,
         is_mimo: bool = False,
         mimo_rank: int = 1,
+        chunk_size: int | None = None,
     ):
         super().__init__()
         self.residual_scale = residual_scale
@@ -45,7 +46,9 @@ class Mamba3Block(nn.Module):
         self.is_mimo = is_mimo
         self.mimo_rank = mimo_rank if is_mimo else 1
         # Official Mamba-3 recommends chunk_size=64/rank for MIMO.
-        chunk_size = 64 // self.mimo_rank if is_mimo else 64
+        chunk_size = chunk_size or (64 // self.mimo_rank if is_mimo else 64)
+        if chunk_size < 8:
+            raise ValueError("Mamba 3 chunk_size must be >= 8")
         self.mixer = _official_mamba(
             d_model=d_model,
             d_state=d_state,

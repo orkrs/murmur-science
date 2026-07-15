@@ -60,6 +60,7 @@ class RecurrentCore(nn.Module):
         norm_eps: float = 1e-5,
         residual_scale: float = 1.0,
         mixer: str = "gqa",
+        mamba_chunk_size: int | None = None,
     ):
         """Initialize recurrent core.
 
@@ -87,6 +88,7 @@ class RecurrentCore(nn.Module):
                     d_model, ffn_dim, d_state=128, headdim=head_dim,
                     norm_eps=norm_eps, residual_scale=residual_scale, layer_idx=i,
                     is_mimo=mixer == "mamba3_mimo", mimo_rank=2,
+                    chunk_size=mamba_chunk_size,
                 )
                 for i in range(n_blocks)
             ])
