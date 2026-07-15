@@ -16,9 +16,9 @@ def test_rtx6000_ada_mimo_smoke_assets_are_self_contained() -> None:
     assert "max_tokens = 2000000" in config
     assert "fp16 = false" in config
     assert "bf16 = true" in config
-    assert "codex/rtx6000-ada-mimo-smoke" in source
-    assert "roneneldan/TinyStories" in source
+    assert "codex/dataset-mix-notebooks" in source
+    assert "english_smoke" in source
+    assert "HuggingFaceFW/fineweb-edu" not in source
     assert "MAMBA_FORCE_BUILD" in source
-    assert "mamba3_mimo_gate.json" in source
-    assert "mimo_smoke_report.json" in source
+    assert "mamba3_mimo" in source
     assert "Add Data" not in source
