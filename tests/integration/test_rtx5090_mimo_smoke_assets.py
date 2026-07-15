@@ -13,12 +13,15 @@ def test_rtx5090_mimo_notebook_pins_blackwell_training_stack_and_own_branch():
     config = CONFIG.read_text(encoding="utf-8")
     notebook = json.loads(NOTEBOOK.read_text(encoding="utf-8"))
     source = "\n".join("".join(cell.get("source", [])) for cell in notebook["cells"])
+    first_code = "".join(next(cell["source"] for cell in notebook["cells"] if cell.get("cell_type") == "code"))
 
     assert 'mixer = "mamba3_mimo"' in config
     assert "fp16 = false" in config and "bf16 = true" in config
     assert "codex/rtx5090-mimo-smoke" in source
     assert "tilelang==0.1.9" in source
     assert "2.9.0+cu130" in source
+    assert "download.pytorch.org/whl/cu130" in source
+    assert "torch" not in first_code
     assert "d_model=896" in source
     assert "d_state=128" in source
     assert "mimo_rank=4" in source
