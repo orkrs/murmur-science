@@ -18,7 +18,7 @@ PY="$VENV_DIR/bin/python"
   "protobuf>=6.30.2,<7" "z3-solver>=4.13,<4.15.5" "fsspec[http]>=2023.1.0,<=2026.4.0" \
   datasets sentencepiece pyarrow pandas einops ninja safetensors tensorboard cloudpickle \
   psutil tqdm typing-extensions transformers
-"$PY" -m pip install --no-deps "apache-tvm-ffi==0.1.10" "tilelang==0.1.8" \
+"$PY" -m pip install --no-deps "apache-tvm-ffi==0.1.10" "tilelang==0.1.10" \
   torch-c-dlpack-ext quack-kernels
 MAMBA_FORCE_BUILD=TRUE "$PY" -m pip install --no-deps --force-reinstall --no-build-isolation \
   "git+https://github.com/state-spaces/mamba.git@main"
