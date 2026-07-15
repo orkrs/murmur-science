@@ -28,6 +28,7 @@ def test_rtx4090_smoke_launcher_is_autonomous_and_gated():
     assert "scripts/train.py" in source
     assert "torch==2.9.0" in setup
     assert "cu128" in setup
+    assert "cloudpickle" in setup
     assert "tilelang==0.1.8" in setup
     assert "apache-tvm-ffi==0.1.10" in setup
 
