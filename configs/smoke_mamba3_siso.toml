@@ -2,7 +2,6 @@ run_name = "smoke_mamba3_siso_40m"
 output_dir = "artifacts/runs"
 
 [model]
-# Same 40M-class scaffold as the MIMO/GQA controls; only the Core mixer differs.
 d_model = 512
 vocab_size = 32000
 n_prelude = 1
@@ -22,8 +21,8 @@ norm_eps = 1e-5
 tie_embeddings = true
 
 [data]
-train_path = "artifacts/data/train.bin"
-val_path = "artifacts/data/val.bin"
+train_path = "artifacts/siso_smoke_data/train.bin"
+val_path = "artifacts/siso_smoke_data/val.bin"
 sequence_length = 512
 batch_size = 1
 num_workers = 0
@@ -39,6 +38,7 @@ warmup_steps = 100
 grad_accum_steps = 8
 grad_clip_norm = 1.0
 fp16 = true
+bf16 = false
 log_interval = 10
 val_interval = 100
 checkpoint_interval = 250
